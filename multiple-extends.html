@@ -1,0 +1,68 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <script>
+
+    function A(name, year) {
+      this.name = name;
+      this.year = year;
+    }
+    A.prototype.first = () => console.log('first');
+    A.prototype.constructor = A;
+
+    function B(name, year) {
+      A.call(this, ...arguments);
+    }
+    B.prototype = Object.create(A.prototype);
+    B.prototype.second = () => console.log('second');
+    B.prototype.constructor = B;
+
+    function C(name, year) {
+      B.call(this, name, year)
+    }
+    C.prototype = Object.create(B.prototype);
+    C.prototype.constructor = C;
+
+
+    const c = new C('User', '23');
+    console.log(c);
+
+    console.log('Multiple extends');
+
+    function D() { }
+    D.prototype.first = () => console.log('first');
+
+    function E() { }
+    E.prototype.second = () => console.log('second');
+
+    function F() { }
+
+
+    // Jquery example
+    /*     F.prototype = $.extend({}, D.prototype, E.prototype);
+        const f = new F();
+        console.log(f); */
+
+
+    function mixin(newClass, extendsClass) {
+      extendsClass.forEach(extend => Object.getOwnPropertyNames(extend.prototype)
+        .forEach(name => newClass.prototype[name] = extend.prototype[name])
+      );
+    }
+
+    mixin(F, [D, E])
+
+    const f = new F();
+    F.prototype.constructor = F;
+    console.log(f);
+
+  </script>
+</body>
+
+</html>
